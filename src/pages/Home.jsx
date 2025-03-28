@@ -4,7 +4,7 @@ import HeroSection from "../components/HeroSection";
 import CoursesSection from "../components/CoursesSection";
 import CertificationSection from "../components/CertificationSection";
 import Collab from "../components/Collab";
-import Footer from "../components/footer";
+import Footer from "../components/Footer";
 import CoursesCard from "../admin/pages/CoursesCard";
 
 function Home() {
