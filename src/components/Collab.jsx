@@ -14,7 +14,7 @@ const companies = [
   { name: "Adobe", logo: "https://1000logos.net/wp-content/uploads/2021/04/Adobe-logo.png" },
 ];
 
-const CollaborationSection = () => {
+const Collab = () => {
   return (
     <Box
       sx={{
@@ -97,4 +97,4 @@ const CollaborationSection = () => {
   );
 };
 
-export default CollaborationSection;
+export default Collab;
