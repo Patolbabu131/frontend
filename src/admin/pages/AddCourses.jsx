@@ -88,12 +88,21 @@ const AddCourses = () => {
 
   // Handle video file upload per lesson and store numeric duration (minutes)
   const handleVideoUpload = async (lessonId, file) => {
+    // Check if file size exceeds 5 MB (5 * 1024 * 1024 bytes)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size exceeds 5 MB limit.");
+      return;
+    }
+
+    // Extract file name without extension
+    const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+
     const durationSeconds = await getVideoDuration(file);
     const durationMinutes = Math.floor(durationSeconds / 60);
     setLessons(prevLessons =>
       prevLessons.map(lesson =>
         lesson.id === lessonId
-          ? { ...lesson, videoFile: file, duration: durationMinutes }
+          ? { ...lesson, videoFile: file, duration: durationMinutes, title: fileNameWithoutExtension }
           : lesson
       )
     );
@@ -225,7 +234,7 @@ const AddCourses = () => {
           <Typography
             variant="h4"
             component="h1"
-            sx={{ color: '#E0E0E0', fontWeight: 'bold' }}  // Updated text color
+            sx={{ color: '#E0E0E0', fontWeight: 'bold' }}
           >
             Add Course
           </Typography>
@@ -269,7 +278,7 @@ const AddCourses = () => {
         {/* Modules Section */}
         <Card sx={{ mb: 4 }}>
           <CardContent>
-            <Typography variant="h6" gutterBottom sx={{ color: '#E0E0E0' }}>  {/* Updated text color */}
+            <Typography variant="h6" gutterBottom sx={{ color: '#E0E0E0' }}>
               Course Modules
             </Typography>
             <Box sx={{ pr: 1 }}>
@@ -302,7 +311,7 @@ const AddCourses = () => {
                           ) : (
                             <label htmlFor={`video-upload-${lesson.id}`}>
                               <Button component="span" color="primary" disabled={uploadLoading[lesson.id] || createCourseLoading}>
-                                <Typography sx={{ color: '#E0E0E0' }}> Select Video </Typography> {/* Updated text color */}
+                                <Typography sx={{ color: '#E0E0E0' }}> Select Video </Typography>
                               </Button>
                             </label>
                           )}
@@ -310,13 +319,13 @@ const AddCourses = () => {
                       </Grid>
                       <Grid item xs={1.9}>
                         {lesson.duration ? (
-                          <Typography variant="body1" sx={{ color: '#E0E0E0' }}> {/* Updated text color */}
+                          <Typography variant="body1" sx={{ color: '#E0E0E0' }}>
                             Duration: {lesson.duration} minute{lesson.duration > 1 ? 's' : ''}
                           </Typography>
                         ) : null}
                       </Grid>
                       <Grid item xs={2}>
-                        <Typography variant="body1" sx={{ color: '#E0E0E0' }}>  {/* Updated text color */}
+                        <Typography variant="body1" sx={{ color: '#E0E0E0' }}>
                           Chapter {index + 1}
                         </Typography>
                       </Grid>
@@ -367,7 +376,7 @@ const AddCourses = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => window.location.href = "http://localhost:5173/admin/dashboard"}
+                onClick={() => window.location.href = "https://learningstake.netlify.app/#/admin/dashboard"}
                 disabled={createCourseLoading}
               >
                 Go Back
@@ -386,11 +395,10 @@ const AddCourses = () => {
               alignItems: 'center'
             }}
           >
-            <Typography variant="h6" component="span" sx={{ color: '#E0E0E0' }}>  {/* Updated text color */}
+            <Typography variant="h6" component="span" sx={{ color: '#E0E0E0' }}>
               Video Preview
             </Typography>
             <Box>
-              {/* Only show "Unselect Video" button if the lesson is not uploaded */}
               {currentPreviewLesson && !currentPreviewLesson.uploaded && (
                 <Button
                   variant="contained"
