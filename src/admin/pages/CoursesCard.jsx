@@ -79,6 +79,7 @@ const styles = {
     
   },
   heading: {
+    color: '#f8f8f8',
     textAlign: 'center',
     marginBottom: '25px',
   },

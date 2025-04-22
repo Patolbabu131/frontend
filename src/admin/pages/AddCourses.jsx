@@ -89,7 +89,7 @@ const AddCourses = () => {
   // Handle video file upload per lesson and store numeric duration (minutes)
   const handleVideoUpload = async (lessonId, file) => {
     // Check if file size exceeds 5 MB (5 * 1024 * 1024 bytes)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       alert("File size exceeds 5 MB limit.");
       return;
     }

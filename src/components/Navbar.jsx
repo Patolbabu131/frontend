@@ -43,6 +43,7 @@ const Navbar = () => {
 
   return (
     <>
+    
       <AppBar
         sx={{
           background: "linear-gradient(135deg, #424242, #212121)",
