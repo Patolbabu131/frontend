@@ -10,6 +10,10 @@ import AdminDashboard from "./admin/pages/AdminDashboard";
 import AddCourses from "./admin/pages/AddCourses";
 import LessonsList from "./admin/pages/LessonsList";
 import AdminProtectedRoute from "./admin/routes/AdminProtectedRoute";
+import EditCourse from "./admin/pages/EditCourse";
+import CertificateGenerator from "./admin/pages/CertificateGenerator";
+import QuestionManager from "./admin/pages/QuestionManager";
+import QuizPage from "./admin/pages/QuizPage";
 
 const App = () => {
   return (
@@ -23,13 +27,17 @@ const App = () => {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="lessonslist/:courseId" element={<LessonsList />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-
+        <Route path="/CertificateGenerator/:courseId" element={<CertificateGenerator />} />
+        <Route path="/QuizPage/:courseId" element={<QuizPage />} />
         {/* Admin Protected Routes */}
         <Route path="/admin/*" element={<AdminProtectedRoute />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="courses" element={<AddCourses />} />
           {/* Optionally, add a default route for admin, e.g., redirect to dashboard */}
           <Route path="" element={<Navigate to="dashboard" replace />} />
+          <Route path="editcourse/:courseId" element={<EditCourse />} />
+          
+          <Route path="question/:courseId" element={<QuestionManager />} />
         </Route>
       </Routes>
     </Router>

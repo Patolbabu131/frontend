@@ -19,41 +19,53 @@ import {
 import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
 import { PlayArrow as PlayIcon } from '@mui/icons-material';
 import { BASE_URL } from '../../assets/config';
+import AdminNavbar from './AdminNavbar'; 
+import { useTheme } from '@mui/material/styles'; // Add this import
+import { useMediaQuery } from '@mui/material';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    background: {
-      default: '#121212',
-      paper: '#1E1E1E'
+const AddCourses = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/admin/login");
+  };
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+      background: {
+        default: '#121212',
+        paper: '#1E1E1E'
+      },
+      primary: { main: '#704BBF' },
+      secondary: { main: '#03DAC6' }
     },
-    primary: { main: '#704BBF' },
-    secondary: { main: '#03DAC6' }
-  },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#1E1E1E',
-          borderRadius: 12,
-          boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+    components: {
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#1E1E1E',
+            borderRadius: 12,
+            boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+          }
         }
-      }
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& label.Mui-focused': { color: '#BB86FC' },
-          '& .MuiOutlinedInput-root': {
-            '&.Mui-focused fieldset': { borderColor: '#BB86FC' }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& label.Mui-focused': { color: '#BB86FC' },
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-focused fieldset': { borderColor: '#BB86FC' }
+            }
           }
         }
       }
     }
-  }
-});
+  });
 
-const AddCourses = () => {
   const [courseDetails, setCourseDetails] = useState({
     title: '',
     description: '',
@@ -227,6 +239,8 @@ const AddCourses = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+
+      <AdminNavbar isMobile={isMobile} handleLogout={handleLogout} />
       <div style={{ padding: 20, background: 'linear-gradient(135deg, #121212, #2C2C2C)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         {/* Page Title */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>

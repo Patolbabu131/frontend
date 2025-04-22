@@ -29,6 +29,7 @@ const CoursesCard = () => {
 
   if (loading) {
     return (
+      
       <div style={{ 
         display: 'flex', 
         justifyContent: 'center', 
@@ -42,6 +43,7 @@ const CoursesCard = () => {
   }
 
   return (
+    
     <div style={styles.wrapper}>
     
       <h1 style={styles.heading}>Available Courses</h1>

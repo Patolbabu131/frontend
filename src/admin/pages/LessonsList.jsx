@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Added useNavigate
 import AdminNavbar from './AdminNavbar';
 import {
   Box,
@@ -10,7 +10,8 @@ import {
   Chip,
   Divider,
   IconButton,
-  Tooltip
+  Tooltip,
+  Button
 } from '@mui/material';
 import {
   PlayArrow,
@@ -31,6 +32,7 @@ const LessonsList = () => {
   const [completedLessons, setCompletedLessons] = useState(new Set());
   const [bookmarkedLessons, setBookmarkedLessons] = useState(new Set());
   const { courseId } = useParams();
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     setLoading(true);
@@ -59,6 +61,34 @@ const LessonsList = () => {
       newBookmarks.add(lessonId);
     }
     setBookmarkedLessons(newBookmarks);
+  };
+
+  useEffect(() => {
+    if (!document.querySelector('script[src="https://widget.kommunicate.io/v2/kommunicate.app"]')) {
+      (function (d, m) {
+        var kommunicateSettings = {
+          appId: "YOUR_APP_ID",
+          popupWidget: true,
+          automaticChatOpenOnNavigation: false,
+        };
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+        var h = document.getElementsByTagName("head")[0];
+        h.appendChild(s);
+        window.kommunicate = m;
+        m._globals = kommunicateSettings;
+      })(document, window.kommunicate || {});
+    }
+  }, []);
+
+  const handleStartQuiz = () => {
+    if (completedLessons.size === lessons.length && lessons.length > 0) {
+      navigate(`/QuizPage/${courseId}`); // Use navigate here
+    } else {
+      alert('You have not completed all chapters to start the quiz.');
+    }
   };
 
   const markAsCompleted = (lessonId) => {
@@ -90,7 +120,6 @@ const LessonsList = () => {
   }
 
   return (
-   
     <Box
       sx={{
         width: '100%',
@@ -100,7 +129,6 @@ const LessonsList = () => {
         p: { xs: 2, md: 3 },
       }}
     >
-    
       <Grid container>
         {/* Left Column: Course Header + Lesson List */}
         <Grid item xs={11.5} md={4} lg={4.1}>
@@ -259,47 +287,49 @@ const LessonsList = () => {
           </Box>
         </Grid>
 
-        {/* Right Column: Video Player + Lesson Details */}
         <Grid item xs={11.5} md={7.5} lg={7.5}>
           {selectedLesson ? (
-            <Box sx={{ 
-              p: { xs: 2, md: 3 }, 
-              backgroundColor: '#1e1e1e', 
-              borderRadius: 3,
-              boxShadow: 3
-            }}>
+            <Box
+              sx={{
+                p: { xs: 2, md: 3 },
+                backgroundColor: '#1e1e1e',
+                borderRadius: 3,
+                boxShadow: 3
+              }}
+            >
+              {/* Title + Complete Toggle */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {selectedLesson.title}
                 </Typography>
-                <Tooltip title={completedLessons.has(selectedLesson._id) ? "Mark as incomplete" : "Mark as completed"}>
+                <Tooltip title={ completedLessons.has(selectedLesson._id)
+                                ? "Mark as incomplete"
+                                : "Mark as completed" }>
                   <IconButton
                     onClick={() => markAsCompleted(selectedLesson._id)}
-                    sx={{ 
-                      color: completedLessons.has(selectedLesson._id) 
-                        ? '#4caf50' 
+                    sx={{
+                      color: completedLessons.has(selectedLesson._id)
+                        ? '#4caf50'
                         : '#bbbbbb',
-                      '&:hover': {
-                        color: '#4caf50'
-                      }
+                      '&:hover': { color: '#4caf50' }
                     }}
                   >
                     <CheckCircle />
                   </IconButton>
                 </Tooltip>
               </Box>
-              
+
               {/* Video Player */}
               <Box
                 sx={{
                   position: 'relative',
                   width: '100%',
-                  pb: '46.25%', // 16:9 aspect ratio
+                  pb: '46.25%', // 16:9
                   mb: 3,
                   backgroundColor: '#000',
                   borderRadius: 2,
                   overflow: 'hidden',
-                  boxShadow: 4
+                  boxShadow: 4,
                 }}
               >
                 <Box
@@ -307,39 +337,25 @@ const LessonsList = () => {
                   controls
                   poster={selectedLesson.thumbnailUrl && `${BASE_URL}${selectedLesson.thumbnailUrl}`}
                   src={`${selectedLesson.videoUrl}`}
+                  onEnded={() => markAsCompleted(selectedLesson._id)}
                   sx={{
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
+                    top: 0, left: 0,
+                    width: '100%', height: '100%',
                   }}
                 />
               </Box>
 
-              {/* Lesson Details */}
-              {/* <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                  About this lesson
-                </Typography>
-                <Typography variant="body1" sx={{ color: '#aaaaaa', lineHeight: 1.7 }}>
-                  {selectedLesson.description || 'No description available.'}
-                </Typography>
-              </Box> */}
-
-              {/* <Divider sx={{ my: 2, borderColor: '#444444' }} /> */}
-
               {/* Lesson Metadata */}
-              <Box sx={{ 
-                display: 'flex', 
-                flexWrap: 'wrap',
-                gap: 2,
-                color: '#aaaaaa',
-                '& > *': {
+              <Box
+                sx={{
                   display: 'flex',
-                  alignItems: 'center'
-                }
-              }}>
+                  flexWrap: 'wrap',
+                  gap: 2,
+                  color: '#aaaaaa',
+                  '& > *': { display: 'flex', alignItems: 'center' }
+                }}
+              >
                 <Box>
                   <AccessTime sx={{ mr: 0.5, fontSize: 18 }} />
                   <Typography variant="body2">
@@ -360,6 +376,17 @@ const LessonsList = () => {
                   </Box>
                 )}
               </Box>
+
+              {/* === only show when all lessons done === */}
+              {lessons.length > 0 && completedLessons.size === lessons.length && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleStartQuiz}
+                >
+                  Start MCQ Test
+                </Button>
+              )}
             </Box>
           ) : (
             <Paper sx={{ 
@@ -383,3 +410,4 @@ const LessonsList = () => {
 };
 
 export default LessonsList;
+

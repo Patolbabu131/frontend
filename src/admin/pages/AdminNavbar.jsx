@@ -24,11 +24,9 @@ const AdminNavbar = ({ isMobile, handleLogout }) => {
           </IconButton>
         )}
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Admin Dashboard
+          Learning Stake
         </Typography>
-        <Button color="inherit" onClick={() => navigate("/admin/courses")}>
-          Manage Courses
-        </Button>
+       
         <Button color="inherit" onClick={handleLogout}>
           Logout
         </Button>
