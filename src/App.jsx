@@ -14,6 +14,7 @@ import EditCourse from "./admin/pages/EditCourse";
 import CertificateGenerator from "./admin/pages/CertificateGenerator";
 import QuestionManager from "./admin/pages/QuestionManager";
 import QuizPage from "./admin/pages/QuizPage";
+import DeepSeekChat from "./components/DeepSeekChat";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/deepSeekChat" element={<DeepSeekChat />} />
         <Route path="lessonslist/:courseId" element={<LessonsList />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/CertificateGenerator/:courseId" element={<CertificateGenerator />} />
