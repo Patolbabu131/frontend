@@ -142,6 +142,10 @@ function QuestionManager() {
     { optionText: '', isCorrect: false },
   ]);
   const [correctIndex, setCorrectIndex] = useState(null);
+  const [aiPopupOpen, setAiPopupOpen] = useState(false);
+  const [questionCount, setQuestionCount] = useState(5);
+  const [difficulty, setDifficulty] = useState('easy');
+  const [isGenerating, setIsGenerating] = useState(false); // State to track API call progress
   const isXsScreen = useMediaQuery('(max-width:600px)');
 
   const authHeaders = {
@@ -308,6 +312,40 @@ function QuestionManager() {
     }
   };
 
+  const handleOpenAiPopup = () => setAiPopupOpen(true);
+  const handleCloseAiPopup = () => setAiPopupOpen(false);
+
+  const handleGenerateAiQuestions = async () => {
+    setIsGenerating(true); // Block input and button
+    try {
+      const url = `${BASE_URL}/questions/log/${courseId}/${questionCount}/${difficulty}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        console.log('API Response:', result);
+        alert(`MCQ Added Successfully!!`);
+        window.location.reload(); // Refresh the page to show new questions
+      } else {
+        console.error('API Error:', result);
+        alert(`Error: ${result.message || 'Failed to generate questions.'}`);
+      }
+    } catch (error) {
+      console.error('Error during API call:', error);
+      alert(`Error: ${error.message}`);
+    } finally {
+      setIsGenerating(false); // Unblock input and button
+      setAiPopupOpen(false); // Close the popup
+    }
+  };
+
   const renderTableView = () => (
     <Paper elevation={3}>
       <TableContainer>
@@ -426,29 +464,48 @@ function QuestionManager() {
             flexDirection: isXsScreen ? 'column' : 'row',
             justifyContent: 'space-between',
             alignItems: isXsScreen ? 'flex-start' : 'center',
-            gap: 2,
+            gap: isXsScreen ? 1 : 1.5, // Reduced gap between buttons
             mb: 4,
           }}>
             <Typography variant="h4" fontWeight="bold">
               MCQ Management <Chip icon={<Quiz />} label={`Course: ${courseName}`} />
             </Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={handleOpenAdd}
-              sx={{
-                px: 3,
-                py: 1,
-                boxShadow: 3,
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: 4,
-                },
-                transition: 'all 0.2s'
-              }}
-            >
-              Add Question
-            </Button>
+            <Box sx={{ display: 'flex', gap: 1 }}> {/* Added wrapper for buttons with reduced gap */}
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                onClick={handleOpenAdd}
+                sx={{
+                  px: 3,
+                  py: 1,
+                  boxShadow: 3,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: 4,
+                  },
+                  transition: 'all 0.2s'
+                }}
+              >
+                Add Question
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<Quiz />}
+                onClick={handleOpenAiPopup}
+                sx={{
+                  px: 3,
+                  py: 1,
+                  boxShadow: 2,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: 3,
+                  },
+                  transition: 'all 0.2s'
+                }}
+              >
+                Create MCQ With AI
+              </Button>
+            </Box>
           </Box>
 
           <Divider sx={{ mb: 4 }} />
@@ -550,6 +607,44 @@ function QuestionManager() {
                 sx={{ width: isXsScreen ? '100%' : 'auto' }}
               >
                 {currentQuestion ? 'Update Question' : 'Create Question'}
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog open={aiPopupOpen} onClose={handleCloseAiPopup} fullWidth maxWidth="sm">
+            <DialogTitle>Generate AI Questions</DialogTitle>
+            <DialogContent>
+              <TextField
+                label="Number of Questions"
+                type="number"
+                fullWidth
+                margin="normal"
+                value={questionCount}
+                onChange={e => {
+                  const value = Math.min(Number(e.target.value), 4); // Limit to max 4
+                  setQuestionCount(value);
+                }}
+                disabled={isGenerating} // Disable input while generating
+              />
+              <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                Difficulty Level
+              </Typography>
+              <RadioGroup
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                row
+              >
+                <FormControlLabel value="easy" control={<Radio />} label="Easy" disabled={isGenerating} />
+                <FormControlLabel value="medium" control={<Radio />} label="Medium" disabled={isGenerating} />
+                <FormControlLabel value="hard" control={<Radio />} label="Hard" disabled={isGenerating} />
+              </RadioGroup>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseAiPopup} disabled={isGenerating}>
+                Cancel
+              </Button>
+              <Button onClick={handleGenerateAiQuestions} variant="contained" disabled={isGenerating}>
+                {isGenerating ? 'Generating...' : 'Generate'}
               </Button>
             </DialogActions>
           </Dialog>

@@ -20,11 +20,13 @@ const DeepSeekChat = () => {
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer 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",
-          "Content-Type": "application/json"
+          "Authorization": "Bearer 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",
+          "HTTP-Referer": "LearningStake.com", // Optional. Site URL for rankings on openrouter.ai.
+          // "X-Title": "LearningStake", 
+          // "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "deepseek/deepseek-r1-zero:free",
+          "model": "meta-llama/llama-4-maverick:free",
           "messages": [
             {
               "role": "user",
@@ -33,7 +35,7 @@ const DeepSeekChat = () => {
           ]
         })
       });
-
+       console.log(res);
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error?.message || 'Failed to fetch response');
