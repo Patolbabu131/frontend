@@ -255,6 +255,7 @@ const QuizPage = () => {
               ))}
             </Stepper>
 
+
             {questions[currentQuestion] && (
               <Card sx={{ p: 3 }}>
                 <Typography variant="h5" gutterBottom color="textPrimary">
